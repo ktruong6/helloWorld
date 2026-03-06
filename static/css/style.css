@@ -1,0 +1,36 @@
+/*style for all paragraphs*/
+p {
+    font-size:14px;
+    color:#002b80
+}
+
+/*style for all level 2 headers*/
+h2 {
+    font-size:30px;
+    color:#002266
+}
+
+/*style for all tables to have a border*/
+table, td, th{
+    border: 1px solid black;
+    border-collapse:collapse;
+}
+
+/*style for extra paragraph using an id attribute*/
+#music {
+    background-color:#002266;
+    padding:10px;
+    color:white;
+}
+
+/*class attribute that underlines HTML element*/
+.underline{
+    text-decoration: underline;
+}
+
+/*logo image styling*/
+img.logo{
+    width: 267px;
+    height: 72px;
+}
+
