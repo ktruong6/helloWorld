@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Favorite Course</h2>
+
+<form action="/favorite_course" method="get">
+    <label>Subject:</label>
+    <input type="text" name="subject">
+    <br>
+    <label>Course Number:</label>
+    <input type="text" name="course_number">
+    <br>
+    <button type="submit">Submit</button>
+</form>
+
+{% if subject and course_number %}
+<p>You entered your favorite course as: {{ subject }} {{ course_number }}</p>
+{% endif %}
+
+{% endblock %}
