@@ -1,6 +1,10 @@
 import os
 from flask import Flask, render_template, request, redirect, url_for, flash
-from models import db, Student, Major
+from flask_login import login_required, LoginManager, login_user, logout_user
+from werkzeug.security import check_password_hash
+
+from authorize import role_required
+from models import db, Student, Major, User
 from datetime import datetime as dt
 
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -11,6 +15,33 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = 'beyond_course_scope'
 db.init_app(app)
 
+login_manager = LoginManager()
+login_manager.login_view='login'
+login_manager.init_app(app)
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
+@app.route('/login',methods=['GET','POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+        user = User.query.filter_by(username=username).first()
+
+        if user and check_password_hash(user.password, password):
+            login_user(user)
+            return redirect(url_for('student_view_all'))
+        else:
+            flash('Invalid username or password', 'error')
+    return render_template('login.html')
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('login'))
 
 @app.route('/student/view')
 def student_view_all():
@@ -116,7 +147,13 @@ def student_delete(student_id):
 
 @app.route('/')
 def home():
-    return redirect(url_for('student_view_all'))
+    return redirect(url_for('login'))
+
+@app.route('/training')
+@login_required
+@role_required(['ADMIN', 'MANAGER'])
+def training():
+    return render_template('training.html')
 
 
 if __name__ == '__main__':
